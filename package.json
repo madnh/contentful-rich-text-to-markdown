@@ -18,6 +18,19 @@
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madnh/contentful-rich-text-to-markdown.git"
+  },
+  "keywords": [
+    "contentful",
+    "richtext",
+    "markdown"
+  ],
+  "bugs": {
+    "url": "https://github.com/madnh/contentful-rich-text-to-markdown/issues"
+  },
+  "homepage": "https://github.com/madnh/contentful-rich-text-to-markdown#readme",
   "peerDependencies": {},
   "husky": {
     "hooks": {
