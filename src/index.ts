@@ -54,8 +54,8 @@ export type RenderEmbeddedModelContext = RenderContext & {
   contentDataPath: string
 }
 
-export interface ModelRender {
-  (entry: EntryPlain<unknown>, context: RenderEmbeddedModelContext): string
+export interface ModelRender<T = unknown> {
+  (entry: EntryPlain<T>, context: RenderEmbeddedModelContext): string
 }
 
 export interface RenderNode {
@@ -71,7 +71,7 @@ export interface RenderMark {
 }
 
 export interface RenderModels {
-  [k: string]: ModelRender
+  [k: string]: ModelRender<any>
 }
 
 export interface Options {
