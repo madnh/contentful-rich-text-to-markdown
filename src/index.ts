@@ -8,14 +8,14 @@ import {
   Mark,
   MARKS,
   Text,
-} from '@contentful/rich-text-types';
-import { Entry } from './contentful-data-types';
+} from '@contentful/rich-text-types'
+import { Entry } from './contentful-data-types'
 
-import * as renders from './renders';
-import * as helpers from './helpers';
+import * as renders from './renders'
+import * as helpers from './helpers'
 
-export { helpers, renders };
-export { Document, BLOCKS, MARKS, INLINES };
+export { helpers, renders }
+export { Document, BLOCKS, MARKS, INLINES }
 
 export type EntryPlain<T> = Pick<Entry<T>, 'sys' | 'fields'>
 
@@ -40,7 +40,7 @@ export type RenderContext = {
   embedDocument: RichtextDocumentRenderEmbedded
   options: Required<Options>
   parent?: CommonNode
-  index?: number,
+  index?: number
   contentData?: Record<string, any>
   addContentData: (value: any, name: string) => string
   combineContentData: (data: Record<string, any>) => void
@@ -59,12 +59,12 @@ export interface ModelRender {
 }
 
 export interface RenderNode {
-  [k: string]: NodeRenderer
-
   fallback: NodeRenderer
+
+  [k: string]: NodeRenderer
 }
 
-export type MarkRenderer = (text: string, parent: CommonNode) => string;
+export type MarkRenderer = (text: string, parent: CommonNode) => string
 
 export interface RenderMark {
   [k: string]: MarkRenderer
@@ -86,7 +86,7 @@ export interface Options {
 
   renderModels?: RenderModels
 
-  prependUrlProtocol?: boolean,
+  prependUrlProtocol?: boolean
 
   contentDataName?: string
 
@@ -97,13 +97,16 @@ const defaultOptions = {
   embeddedEntryRenderNotFound: 'throw',
   contentDataName: 'contentData',
   prependUrlProtocol: true,
-} as Required<Options>;
+} as Required<Options>
 
-export const documentToMarkdown: RichtextDocumentRender = (richTextDocument: Document, options: Partial<Options> = {}): MarkdownResult => {
+export const documentToMarkdown: RichtextDocumentRender = (
+  richTextDocument: Document,
+  options: Partial<Options> = {}
+): MarkdownResult => {
   if (!richTextDocument || !richTextDocument.content) {
     return {
       content: '',
-    };
+    }
   }
 
   const finallyOptions: Required<Options> = {
@@ -118,85 +121,87 @@ export const documentToMarkdown: RichtextDocumentRender = (richTextDocument: Doc
       ...options.renderMark,
     },
     renderModels: {
-      ...options.renderModels || {},
+      ...(options.renderModels || {}),
     },
-  };
+  }
 
   const context: RenderContext = {
     addContentData(value: any, name: string): string {
       if (!context.contentData) {
-        context.contentData = {};
+        context.contentData = {}
       }
 
-      context.contentData[name] = value;
+      context.contentData[name] = value
 
-      return `${finallyOptions.contentDataName}.${name}`;
+      return `${finallyOptions.contentDataName}.${name}`
     },
 
     combineContentData(data) {
-      Object.entries(data).forEach(([name, value]) => context.addContentData(value, name));
+      Object.entries(data).forEach(([name, value]) => context.addContentData(value, name))
     },
 
     // @ts-ignore
     next: undefined,
 
-    embedDocument: ((document, embedOptions) => {
-      const result = documentToMarkdown(document, { ...finallyOptions, ...embedOptions || {} });
+    embedDocument: (document, embedOptions) => {
+      const result = documentToMarkdown(document, { ...finallyOptions, ...(embedOptions || {}) })
       if (result.contentData) {
-        context.combineContentData(result.contentData);
+        context.combineContentData(result.contentData)
       }
-      return result.content;
-    }),
+      return result.content
+    },
     options: finallyOptions,
-  };
+  }
 
-  let content = renderNodeList(richTextDocument.content, context);
-  content = content.replace(/^\n{2,}/gm, '\n');
+  let content = renderNodeList(richTextDocument.content, context)
+  content = content.replace(/^\n{2,}/gm, '\n')
 
   if (context.contentData) {
     return {
       contentData: context.contentData,
       content: content,
-    };
+    }
   }
 
   return {
     content: content,
-  };
-};
+  }
+}
 
 function renderNodeList(nodes: CommonNode[], context: RenderContext): string {
-  return nodes.map<string>((node, index) => renderNode(node, { ...context, index })).join('');
+  return nodes
+    .map<string>((node, index) => renderNode(node, { ...context, index }))
+    .join('')
 }
 
 function renderNode(node: CommonNode, context: RenderContext): string {
-  const { options } = context;
+  const { options } = context
 
   // Render marks
   if (richTextHelpers.isText(node)) {
-    const nodeValue = node.value;
+    const nodeValue = node.value
 
     if (node.marks.length > 0) {
       return node.marks.reduce((value: string, mark: Mark) => {
-        const markRender = options.renderMark[mark.type];
+        const markRender = options.renderMark[mark.type]
 
-        if (!markRender) return value;
+        if (!markRender) return value
 
-        return markRender(value, node);
-      }, nodeValue);
+        return markRender(value, node)
+      }, nodeValue)
     }
 
-    return nodeValue;
+    return nodeValue
   }
 
   // Render nodes
 
-  const nextNode: RenderNext = (nodes) => renderNodeList(nodes || node.content, { ...context, parent: node });
-  const nodeType = node.nodeType;
-  if (!nodeType) return '';
+  const nextNode: RenderNext = nodes => renderNodeList(nodes || node.content, { ...context, parent: node })
+  const nodeType = node.nodeType
+  if (!nodeType) return ''
 
-  const nodeRenderer = options.renderNode[nodeType] || options.renderNode.fallback;
-  if (!nodeRenderer) return '';
+  const nodeRenderer = options.renderNode[nodeType] || options.renderNode.fallback
+  if (!nodeRenderer) return ''
 
-  return nodeRenderer(node, { ...context, next: nextNode });
+  return nodeRenderer(node, { ...context, next: nextNode })
 }

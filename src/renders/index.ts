@@ -1,28 +1,27 @@
-import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
-import { RenderMark, RenderNode } from '../index';
+import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types'
+import { RenderMark, RenderNode } from '../index'
 
-import { renderBlockFallback } from './block-fallback';
-import { renderBlockEmbeddedEntry } from './block-embedded-entry';
-import { renderBlockEmbeddedAsset } from './block-embedded-asset';
-import { renderBlockParagraph } from './block-paragraph';
-import { createRenderBlockHeading } from './block-heading';
-import { renderBlockUseChild } from './block-use-child';
-import { renderBlockListItem } from './block-list-item';
-import { renderBlockHr } from './block-hr';
-import { renderBlockQuote } from './block-quote';
-import { renderInlineAssetHyperlink, renderInlineHyperlink } from './inline-hyperlink';
-import { renderInlineEntryHyperlink } from './inline-entry-hyperlink';
-import { renderInlineEmbeddedEntry } from './inline-embedded-entry';
+import { renderBlockFallback } from './block-fallback'
+import { renderBlockEmbeddedEntry } from './block-embedded-entry'
+import { renderBlockEmbeddedAsset } from './block-embedded-asset'
+import { renderBlockParagraph } from './block-paragraph'
+import { createRenderBlockHeading } from './block-heading'
+import { renderBlockUseChild } from './block-use-child'
+import { renderBlockListItem } from './block-list-item'
+import { renderBlockHr } from './block-hr'
+import { renderBlockQuote } from './block-quote'
+import { renderInlineAssetHyperlink, renderInlineHyperlink } from './inline-hyperlink'
+import { renderInlineEntryHyperlink } from './inline-entry-hyperlink'
+import { renderInlineEmbeddedEntry } from './inline-embedded-entry'
 
-import * as Marks from './marks';
-
+import * as Marks from './marks'
 
 export const marks: RenderMark = {
   [MARKS.BOLD]: Marks.renderMarkBold,
   [MARKS.ITALIC]: Marks.renderMarkItalic,
   [MARKS.UNDERLINE]: Marks.renderMarkUnderline,
   [MARKS.CODE]: Marks.renderMarkCode,
-};
+}
 
 export const blocks: RenderNode = {
   [BLOCKS.PARAGRAPH]: renderBlockParagraph,
@@ -44,4 +43,4 @@ export const blocks: RenderNode = {
   [INLINES.EMBEDDED_ENTRY]: renderInlineEmbeddedEntry,
   [INLINES.HYPERLINK]: renderInlineHyperlink,
   fallback: renderBlockFallback,
-};
+}
