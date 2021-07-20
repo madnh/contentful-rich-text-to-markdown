@@ -24,7 +24,7 @@
       "pre-commit": "tsdx lint"
     }
   },
-  "name": "richtext-to-markdown",
+  "name": "contentful-rich-text-to-markdown",
   "author": "madnh",
   "module": "dist/richtext-to-markdown.esm.js",
   "size-limit": [
