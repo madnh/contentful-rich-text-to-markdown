@@ -12,7 +12,7 @@ export function prependLines(content: string, append: string | AppendFunction): 
     .join('\n')
 }
 
-type RegexMatchGroups<Keys extends string = ''> = Record<Keys, any>
+type RegexMatchGroups<Keys extends string = ''> = Record<Keys, unknown>
 
 export function extractRegExp<Groups extends string>(re: RegExp, str: string): [boolean, RegexMatchGroups<Groups>] {
   re.lastIndex = 0

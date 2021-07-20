@@ -1,8 +1,7 @@
-import { NodeRenderer, RenderEmbeddedModelContext } from '../index'
-import { Entry } from '../contentful-data-types'
+import { EntryPlain, NodeRenderer, RenderEmbeddedModelContext } from '../index'
 
 export const renderBlockEmbeddedEntry: NodeRenderer = (node, context) => {
-  const entry = node.data.target as Entry<any>
+  const entry = node.data.target as EntryPlain
   const entryId = entry?.sys?.id
   const entryType = entry?.sys?.contentType?.sys?.id
 

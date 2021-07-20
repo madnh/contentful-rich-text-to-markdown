@@ -17,7 +17,7 @@ import * as helpers from './helpers'
 export { helpers, renders }
 export { Document, BLOCKS, MARKS, INLINES }
 
-export type EntryPlain<T> = Pick<Entry<T>, 'sys' | 'fields'>
+export type EntryPlain<T = unknown> = Pick<Entry<T>, 'sys' | 'fields'>
 
 export type CommonNode = Text | Block | Inline
 
@@ -26,7 +26,7 @@ export interface RenderNext {
 }
 
 export type MarkdownResult = {
-  contentData?: Record<string, any>
+  contentData?: Record<string, unknown>
   content: string
 }
 export type RichtextDocumentRender = {
@@ -41,9 +41,9 @@ export type RenderContext = {
   options: Required<Options>
   parent?: CommonNode
   index?: number
-  contentData?: Record<string, any>
-  addContentData: (value: any, name: string) => string
-  combineContentData: (data: Record<string, any>) => void
+  contentData?: Record<string, unknown>
+  addContentData: (value: unknown, name: string) => string
+  combineContentData: (data: Record<string, unknown>) => void
 }
 
 export interface NodeRenderer {
@@ -55,7 +55,7 @@ export type RenderEmbeddedModelContext = RenderContext & {
 }
 
 export interface ModelRender {
-  (entry: EntryPlain<any>, context: RenderEmbeddedModelContext): string
+  (entry: EntryPlain<unknown>, context: RenderEmbeddedModelContext): string
 }
 
 export interface RenderNode {
@@ -126,7 +126,7 @@ export const documentToMarkdown: RichtextDocumentRender = (
   }
 
   const context: RenderContext = {
-    addContentData(value: any, name: string): string {
+    addContentData(value: unknown, name: string): string {
       if (!context.contentData) {
         context.contentData = {}
       }
@@ -140,8 +140,7 @@ export const documentToMarkdown: RichtextDocumentRender = (
       Object.entries(data).forEach(([name, value]) => context.addContentData(value, name))
     },
 
-    // @ts-ignore
-    next: undefined,
+    next: () => '',
 
     embedDocument: (document, embedOptions) => {
       const result = documentToMarkdown(document, { ...finallyOptions, ...(embedOptions || {}) })
