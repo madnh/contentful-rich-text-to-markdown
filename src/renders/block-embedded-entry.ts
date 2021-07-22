@@ -5,17 +5,13 @@ export const renderBlockEmbeddedEntry: NodeRenderer = (node, context) => {
   const entryId = entry?.sys?.id
   const entryType = entry?.sys?.contentType?.sys?.id
 
-  const renderModel = context.options.renderModels[entryType]
+  let renderModel = context.options.renderModels[entryType]
   if (!renderModel) {
-    const message = `Embedded entry render not defined: type=${entryType} id=${entryId}`
-    if (context.options.embeddedEntryRenderNotFound === 'throw') {
-      throw new Error(message)
-    } else {
-      if (context.options.embeddedEntryRenderNotFound === 'warn') {
-        console.warn(`[WARN] ${message}`)
-      }
-      return `\n\n<!-- WARN: ${message} -->\n\n`
+    if (!context.options.renderModels.fallback) {
+      throw new Error(`Embedded entry render not defined: type=${entryType} id=${entryId}`)
     }
+
+    renderModel = context.options.renderModels.fallback
   }
 
   const renderContext: RenderEmbeddedModelContext = {

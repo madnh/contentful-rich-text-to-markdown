@@ -72,6 +72,8 @@ export interface RenderMark {
 
 export interface RenderModels {
   [k: string]: ModelRender<any>
+
+  fallback: ModelRender<any>
 }
 
 export interface Options {
@@ -87,20 +89,18 @@ export interface Options {
   renderModels?: RenderModels
 
   prependUrlProtocol?: boolean
-
   contentDataName?: string
-
-  embeddedEntryRenderNotFound?: 'throw' | 'warn' | 'markdown-log'
+  modelFallbackComponentName?: string
 }
 
 const defaultOptions = {
-  embeddedEntryRenderNotFound: 'throw',
   contentDataName: 'contentData',
   prependUrlProtocol: true,
+  modelFallbackComponentName: 'RichtextModel',
 } as Required<Options>
 
 export const documentToMarkdown: RichtextDocumentRender = (
-  richTextDocument: Document,
+  richTextDocument,
   options: Partial<Options> = {}
 ): MarkdownResult => {
   if (!richTextDocument || !richTextDocument.content) {
@@ -121,6 +121,7 @@ export const documentToMarkdown: RichtextDocumentRender = (
       ...options.renderMark,
     },
     renderModels: {
+      fallback: renders.modelRenderFallback,
       ...(options.renderModels || {}),
     },
   }
@@ -203,4 +204,8 @@ function renderNode(node: CommonNode, context: RenderContext): string {
   if (!nodeRenderer) return ''
 
   return nodeRenderer(node, { ...context, next: nextNode })
+}
+
+export function asModelRender<T = unknown>(fn: ModelRender<T>): ModelRender<T> {
+  return fn
 }

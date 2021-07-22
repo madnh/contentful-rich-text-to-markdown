@@ -1,5 +1,5 @@
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types'
-import { RenderMark, RenderNode } from '../index'
+import { ModelRender, RenderMark, RenderNode } from '../index'
 
 import { renderBlockFallback } from './block-fallback'
 import { renderBlockEmbeddedEntry } from './block-embedded-entry'
@@ -43,4 +43,15 @@ export const blocks: RenderNode = {
   [INLINES.EMBEDDED_ENTRY]: renderInlineEmbeddedEntry,
   [INLINES.HYPERLINK]: renderInlineHyperlink,
   fallback: renderBlockFallback,
+}
+
+export const modelRenderFallback: ModelRender<any> = (entry, context) => {
+  const { addContentData, contentDataPath, options } = context
+
+  const tagName = options.modelFallbackComponentName
+  const type = entry.sys.contentType.sys.id
+  const sysId = entry.sys.id
+
+  const dataPath = addContentData(entry.fields, contentDataPath)
+  return `<${tagName} :type='${type}' :sys-id='${sysId}' :fields='${dataPath}'></${tagName}>`
 }
