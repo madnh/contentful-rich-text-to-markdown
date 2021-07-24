@@ -53,5 +53,5 @@ export const modelRenderFallback: ModelRender<any> = (entry, context) => {
   const sysId = entry.sys.id
 
   const dataPath = addContentData(entry.fields, contentDataPath)
-  return `<${tagName} :type='${type}' :sys-id='${sysId}' :fields='${dataPath}'></${tagName}>`
+  return `<${tagName} type='${type}' sys-id='${sysId}' :fields='${dataPath}'></${tagName}>`
 }
