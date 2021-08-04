@@ -47,11 +47,15 @@ export const blocks: RenderNode = {
 
 export const modelRenderFallback: ModelRender<any> = (entry, context) => {
   const { addContentData, contentDataPath, options } = context
-
+  const sysId = entry?.sys?.id || 'unknown'
+  const type = entry?.sys?.contentType?.sys?.id || 'unknown'
   const tagName = options.modelFallbackComponentName
-  const type = entry.sys.contentType.sys.id
-  const sysId = entry.sys.id
+  const fields = entry.fields
 
-  const dataPath = addContentData(entry.fields, contentDataPath)
-  return `<${tagName} type='${type}' sys-id='${sysId}' :fields='${dataPath}'></${tagName}>`
+  if (fields) {
+    const dataPath = addContentData(fields, contentDataPath)
+    return `<${tagName} type='${type}' sys-id='${sysId}' :fields='${dataPath}'></${tagName}>`
+  }
+
+  return `<${tagName} type='${type}' sys-id='${sysId}' :fields='{}'></${tagName}>`
 }

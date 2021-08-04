@@ -76,6 +76,14 @@ export interface RenderModels {
   fallback: ModelRender<any>
 }
 
+export interface ModelValidate {
+  (entry: Partial<EntryPlain<any>>): boolean | string
+}
+
+export interface OnModelInvalid {
+  (entry: Partial<EntryPlain<any>>, reason: string): void
+}
+
 export interface Options {
   /**
    * Node renderers
@@ -91,12 +99,20 @@ export interface Options {
   prependUrlProtocol?: boolean
   contentDataName?: string
   modelFallbackComponentName?: string
+  modelValidate?: ModelValidate
+  onModelInvalid?: OnModelInvalid
 }
 
+const defaultOnModelOnValid: OnModelInvalid = (entry, reason) => {
+  const entryId = entry?.sys?.id || 'unknown'
+  const entryType = entry?.sys?.contentType?.sys?.id || 'unknown'
+  console.warn(`Entry is invalid: sysId=${entryId} type=${entryType} reason=${reason}`)
+}
 const defaultOptions = {
   contentDataName: 'contentData',
   prependUrlProtocol: true,
   modelFallbackComponentName: 'RichtextModel',
+  onModelInvalid: defaultOnModelOnValid,
 } as Required<Options>
 
 export const documentToMarkdown: RichtextDocumentRender = (
@@ -209,3 +225,4 @@ function renderNode(node: CommonNode, context: RenderContext): string {
 export function asModelRender<T = unknown>(fn: ModelRender<T>): ModelRender<T> {
   return fn
 }
+export { validateEntry } from './validate-entry'
